@@ -17,7 +17,9 @@ const Screen = () => {
   }, [])
 
   return (
-    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden">
+    <>
+    {/* <div className="bg-black/20 backdrop-blur-xs z-50 fixed w-[156px] h-[188px] mt-[18px] rounded-md"></div> */}
+    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden bg-gray-800">
 
       {/* Top Status Bar */}
       <div className="flex justify-between items-center px-2 py-1 text-[10px] text-gray-100 border-b border-gray-600 font-semibold">
@@ -68,6 +70,7 @@ const Screen = () => {
 
       </div>
     </div>
+    </>
   )
 }
 

@@ -78,11 +78,11 @@ const Screen = ({ currentlyPlaying }) => {
         <img
             src={albumArt}
             alt="Album Cover"
-            className="absolute inset-0 left-7 top-13 w-34 h-34 object-cover blur-sm opacity-40 z-0"
+            className="absolute inset-0 left-6 top-14 w-35 h-35 object-cover blur-sm opacity-40 z-0"
           />
 
         {/* Album Art */}
-        <div className="relative mt-1 w-[70px] h-[70px] mx-auto rounded overflow-hidden shadow border border-gray-600 z-1">
+        <div className="relative mt-1 w-[70px] h-[70px] mx-auto rounded overflow-hidden shadow z-1">
           <img
             src={albumArt}
             alt="Album Cover"

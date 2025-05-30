@@ -63,12 +63,48 @@ app.get("/callback", async (req, res) => {
     console.log("Access Token:", access_token);
     console.log("Refresh Token:", refresh_token);
 
-    res.send("Login successful! You can now close this window.");
+    res.redirect(`${process.env.FRONTEND_URI}/?access_token=${access_token}&refresh_token=${refresh_token}`);
+
   } catch (error) {
     console.error("Error getting tokens:", error.response?.data || error.message);
     res.send("Error during authentication.");
   }
 });
+
+app.get("/refresh_token", async (req, res) => {
+  const refresh_token = req.query.refresh_token;
+  if (!refresh_token) {
+    return res.status(400).send({ error: "Missing refresh_token" });
+  }
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      querystring.stringify({
+        grant_type: "refresh_token",
+        refresh_token: refresh_token,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            Buffer.from(
+              process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET
+            ).toString("base64"),
+        },
+      }
+    );
+
+    const { access_token, expires_in } = response.data;
+
+    res.send({ access_token, expires_in });
+  } catch (error) {
+    console.error("Error refreshing token:", error.response?.data || error.message);
+    res.status(500).send({ error: "Failed to refresh token" });
+  }
+});
+
 
 
 

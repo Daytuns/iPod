@@ -6,6 +6,7 @@ function IPod() {
 
   const [accessToken, setAccessToken] = useState(null);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem("spotify_refresh_token");
@@ -81,6 +82,7 @@ function IPod() {
 
         const data = await response.json();
         setCurrentlyPlaying(data);
+        setIsPlaying(data?.is_playing);
         console.log("Now playing:", data);
 
       } catch (error) {
@@ -93,6 +95,33 @@ function IPod() {
 
     return () => clearInterval(interval);
   }, [accessToken]);
+
+  const handlePlayPause = async () => {
+    const endpoint = isPlaying
+      ? "https://api.spotify.com/v1/me/player/pause"
+      : "https://api.spotify.com/v1/me/player/play";
+
+      console.log("Local isPlaying state:", isPlaying);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+
+      if (response.ok) {
+        setIsPlaying(!isPlaying);
+      } else {
+        const err = await response.json();
+        console.error("Failed to toggle playback", err);
+      }
+    } catch (error) {
+      console.error("Error toggling playback", error);
+    }
+  };
 
   return (
     <>
@@ -111,7 +140,7 @@ function IPod() {
           <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-white/30 to-transparent rounded-l-[2rem]"></div>
 
           <Screen currentlyPlaying={currentlyPlaying}/>
-          <Wheel />
+          <Wheel isPlaying={isPlaying} onPlayPause={handlePlayPause} />
         </div>
       </div>
     </>

@@ -1,0 +1,85 @@
+import { useEffect, useState } from "react";
+
+export function useNowPlaying(accessToken, refreshAccessToken) {
+  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const fetchCurrentlyPlaying = async () => {
+    if (!accessToken) return;
+
+    try {
+      const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (response.status === 204) return setCurrentlyPlaying(null);
+      if (response.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (newToken) return;
+      }
+
+      const data = await response.json();
+      setCurrentlyPlaying(data);
+      setIsPlaying(data?.is_playing);
+    } catch (err) {
+      console.error("Now playing error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!accessToken) return;
+
+    fetchCurrentlyPlaying();
+    const interval = setInterval(fetchCurrentlyPlaying, 5000);
+    return () => clearInterval(interval);
+  }, [accessToken]);
+
+  const togglePlayback = async () => {
+    const endpoint = isPlaying
+      ? "https://api.spotify.com/v1/me/player/pause"
+      : "https://api.spotify.com/v1/me/player/play";
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (res.ok) setIsPlaying(!isPlaying);
+    } catch (err) {
+      console.error("Playback toggle error:", err);
+    }
+  };
+
+  const playNext = async () => {
+    try {
+      const res = await fetch("https://api.spotify.com/v1/me/player/next", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (res.ok) {
+        setTimeout(fetchCurrentlyPlaying, 1000);
+      }
+    } catch (err) {
+      console.error("Play next error:", err);
+    }
+  };
+
+  const playPrevious = async () => {
+    try {
+      const res = await fetch("https://api.spotify.com/v1/me/player/previous", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (res.ok) {
+        setTimeout(fetchCurrentlyPlaying, 1000);
+      }
+    } catch (err) {
+      console.error("Play previous error:", err);
+    }
+  };
+
+  return { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious };
+}

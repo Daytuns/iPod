@@ -95,7 +95,7 @@ const Screen = ({ currentlyPlaying }) => {
         <div className="text-center text-gray-100 mt-1 space-y-[2px] leading-tight z-1">
           <div className="text-[10px] font-bold text-white truncate">{ trackName }</div>
           <div className="text-[9px] text-gray-300">{ artists }</div>
-          <div className="text-[8px] text-gray-400">{ albumName }</div>
+          {/* <div className="text-[8px] text-gray-400">{ albumName }</div> */}
         </div>
 
         {/* Progress Bar */}

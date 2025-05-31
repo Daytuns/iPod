@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
 
-const Screen = ({ currentlyPlaying }) => {
+const Screen = ({ currentlyPlaying, device }) => {
 
   const [time, setTime] = useState(() => {
     const now = new Date()
@@ -49,6 +49,7 @@ const Screen = ({ currentlyPlaying }) => {
   const artists = song?.artists?.map(artist => artist.name).join(", ") || "";
   const albumName = song?.album?.name || "";
   const albumArt = song?.album?.images?.[0]?.url || "https://heroui.com/images/album-cover.png";
+  const playbackDevice = device?.name || "Unknown device";
 
   const progressPercent = (progress / duration) * 100;
 
@@ -79,10 +80,12 @@ const Screen = ({ currentlyPlaying }) => {
             src={albumArt}
             alt="Album Cover"
             className="absolute inset-0 left-6 top-14 w-35 h-35 object-cover blur-md opacity-40 z-0"
-          />
+        />
+
+        <p className="flex justify-center text-[8px] text-gray-400">Listening on { playbackDevice }</p>
 
         {/* Album Art */}
-        <div className="relative mt-1 w-[70px] h-[70px] mx-auto rounded overflow-hidden shadow z-1">
+        <div className="relative mt-2.5 w-[70px] h-[70px] mx-auto rounded overflow-hidden shadow z-1">
           <img
             src={albumArt}
             alt="Album Cover"
@@ -101,7 +104,7 @@ const Screen = ({ currentlyPlaying }) => {
         {/* Progress Bar */}
         <div className="px-3 mt-2 z-1">
           <div className="w-full h-[4px] bg-gray-700 rounded-full overflow-hidden shadow-inner">
-            <div className="h-full bg-blue-400 w-1/3 rounded-full"
+            <div className="h-full bg-blue-400 w-1/3 rounded-full transition-all duration-500"
             style={{ width: `${progressPercent}%` }}
             ></div>
           </div>

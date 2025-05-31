@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export function useNowPlaying(accessToken, refreshAccessToken) {
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [device, setDevice] = useState(null); 
 
   const fetchCurrentlyPlaying = async () => {
     if (!accessToken) return;
@@ -26,11 +27,32 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
     }
   };
 
+  const fetchDeviceInfo = async () => {
+    try {
+      const res = await fetch("https://api.spotify.com/v1/me/player", {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setDevice(data.device); 
+      }
+    } catch (err) {
+      console.error("Device info fetch error:", err);
+    }
+  };
+
   useEffect(() => {
     if (!accessToken) return;
 
     fetchCurrentlyPlaying();
-    const interval = setInterval(fetchCurrentlyPlaying, 5000);
+    fetchDeviceInfo();
+
+    const interval = setInterval(() => {
+      fetchCurrentlyPlaying();
+      fetchDeviceInfo();
+    }, 5000); 
+
     return () => clearInterval(interval);
   }, [accessToken]);
 
@@ -59,7 +81,10 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
       });
 
       if (res.ok) {
-        setTimeout(fetchCurrentlyPlaying, 1000);
+        setTimeout(() => {
+          fetchCurrentlyPlaying();
+          fetchDeviceInfo();
+        }, 1000);
       }
     } catch (err) {
       console.error("Play next error:", err);
@@ -74,12 +99,22 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
       });
 
       if (res.ok) {
-        setTimeout(fetchCurrentlyPlaying, 1000);
+        setTimeout(() => {
+          fetchCurrentlyPlaying();
+          fetchDeviceInfo();
+        }, 1000);
       }
     } catch (err) {
       console.error("Play previous error:", err);
     }
   };
 
-  return { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious };
+  return {
+    currentlyPlaying,
+    isPlaying,
+    togglePlayback,
+    playNext,
+    playPrevious,
+    device,
+  };
 }

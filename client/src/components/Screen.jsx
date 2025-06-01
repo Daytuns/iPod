@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
 
-const Screen = ({ currentlyPlaying, device }) => {
+const Screen = ({ currentlyPlaying, device, seekPosition }) => {
 
   const [time, setTime] = useState(() => {
     const now = new Date()
@@ -11,6 +11,9 @@ const Screen = ({ currentlyPlaying, device }) => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const progressBarRef = useRef(null);
 
 
   useEffect(() => {
@@ -33,7 +36,6 @@ const Screen = ({ currentlyPlaying, device }) => {
     setIsPlaying(is_playing);
   }, [currentlyPlaying]);
 
-  // Local timer that simulates playback progress
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -43,6 +45,35 @@ const Screen = ({ currentlyPlaying, device }) => {
 
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging || !progressBarRef.current) return;
+
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const ratio = Math.min(Math.max(mouseX / rect.width, 0), 1);
+      const newProgress = ratio * duration;
+
+      setProgress(newProgress);
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging) return;
+
+      setIsDragging(false);
+      seekPosition(progress); // Final update when drag ends
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+}, [isDragging, duration, progress, seekPosition]);
+
 
   const song = currentlyPlaying?.item || null;
   const trackName = song?.name || "No song playing";
@@ -79,9 +110,10 @@ const Screen = ({ currentlyPlaying, device }) => {
         <img
             src={albumArt}
             alt="Album Cover"
-            className="absolute inset-0 left-6 top-14 w-35 h-35 object-cover blur-md opacity-40 z-0"
+            className="absolute inset-0 left-6 top-14 w-35 h-35 object-cover blur-md opacity-50 z-0"
         />
 
+        {/* Device */}
         <p className="flex justify-center text-[8px] text-gray-400">Listening on { playbackDevice }</p>
 
         {/* Album Art */}
@@ -97,17 +129,43 @@ const Screen = ({ currentlyPlaying, device }) => {
         {/* Track Info */}
         <div className="text-center text-gray-100 mt-1 space-y-[2px] leading-tight z-1">
           <div className="text-[10px] font-bold text-white truncate">{ trackName }</div>
-          <div className="text-[9px] text-gray-300">{ artists }</div>
+          <div className="text-[9px] text-gray-300 truncate">{ artists }</div>
           {/* <div className="text-[8px] text-gray-400">{ albumName }</div> */}
         </div>
 
         {/* Progress Bar */}
         <div className="px-3 mt-2 z-1">
-          <div className="w-full h-[4px] bg-gray-700 rounded-full overflow-hidden shadow-inner">
-            <div className="h-full bg-blue-400 w-1/3 rounded-full transition-all duration-500"
-            style={{ width: `${progressPercent}%` }}
-            ></div>
+          <div className="relative w-full h-[8px]">
+            <div
+              ref={progressBarRef}
+              onClick={(e) => {
+                if (!progressBarRef.current) return;
+
+                const rect = progressBarRef.current.getBoundingClientRect();
+                const clickX = e.clientX - rect.left; 
+                const clickRatio = clickX / rect.width;
+                const newProgress = clickRatio * duration;
+
+                setProgress(newProgress);
+                seekPosition(newProgress); 
+              }}
+              className="cursor-pointer w-full h-[4px] bg-gray-700 rounded-full overflow-hidden shadow-inner"
+            >
+              <div
+                className="h-full bg-blue-400 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+
+            {/* Seeker dot */}
+            <div
+              className="cursor-pointer absolute top-1/3 -translate-y-1/2 w-[6px] h-[6px] rounded-full bg-white shadow transition-all duration-300"
+              style={{ left: `calc(${progressPercent}% - 2px)` }}
+              onMouseDown={() => setIsDragging(true)}
+              onDragStart={(e) => e.preventDefault()}
+            />
           </div>
+
           <div className="flex justify-between text-[8px] mt-[2px] text-gray-400">
             <span>{msToTime(progress)}</span>
             <span>{msToTime(duration)}</span>

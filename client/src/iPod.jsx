@@ -5,7 +5,7 @@ import { useNowPlaying } from "./useNowPlaying";
 
 function IPod() {
   const { accessToken, refreshAccessToken } = useSpotifyAuth();
-  const { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious, device } = useNowPlaying(accessToken, refreshAccessToken);
+  const { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious, device, seekPosition } = useNowPlaying(accessToken, refreshAccessToken);
 
   return (
     <>
@@ -21,7 +21,7 @@ function IPod() {
           <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-white/30 to-transparent rounded-l-[2rem]"></div>
           <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-white/30 to-transparent rounded-l-[2rem]"></div>
 
-          <Screen currentlyPlaying={currentlyPlaying} device={device} />
+          <Screen currentlyPlaying={currentlyPlaying} device={device} seekPosition={seekPosition}/>
           <Wheel isPlaying={isPlaying} onPlayPause={togglePlayback} onNext={playNext} onPrevious={playPrevious} />
         </div>
       </div>

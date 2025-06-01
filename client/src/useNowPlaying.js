@@ -13,7 +13,11 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
 
-      if (response.status === 204) return setCurrentlyPlaying(null);
+      if (response.status === 204) {
+        setCurrentlyPlaying(null);
+        setIsPlaying(false); // <- THIS is the missing piece
+        return;
+        }
       if (response.status === 401) {
         const newToken = await refreshAccessToken();
         if (newToken) return;
@@ -67,7 +71,11 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
 
-      if (res.ok) setIsPlaying(!isPlaying);
+      if (res.ok) {
+        setIsPlaying(!isPlaying);
+        fetchCurrentlyPlaying();
+        fetchDeviceInfo();
+    }
     } catch (err) {
       console.error("Playback toggle error:", err);
     }
@@ -109,6 +117,26 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
     }
   };
 
+  const seekPosition = async (pos) => {
+  const roundedPos = Math.round(pos); // or Math.round(pos)
+  console.log(roundedPos);
+
+  try {
+    const res = await fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${roundedPos}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Seek failed:", errorData);
+    }
+  } catch (err) {
+    console.error("Seek position error: ", err);
+  }
+};
+
+
   return {
     currentlyPlaying,
     isPlaying,
@@ -116,5 +144,6 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
     playNext,
     playPrevious,
     device,
+    seekPosition
   };
 }

@@ -159,7 +159,7 @@ const Screen = ({ currentlyPlaying, device, seekPosition }) => {
 
             {/* Seeker dot */}
             <div
-              className="cursor-pointer absolute top-1/3 -translate-y-1/2 w-[6px] h-[6px] rounded-full bg-white shadow transition-all duration-300"
+              className="cursor-pointer absolute top-1/4 -translate-y-1/2 w-[6px] h-[6px] rounded-full bg-white shadow transition-all duration-300"
               style={{ left: `calc(${progressPercent}% - 2px)` }}
               onMouseDown={() => setIsDragging(true)}
               onDragStart={(e) => e.preventDefault()}

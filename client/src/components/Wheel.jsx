@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 
 const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }) => {
-  const [centerPressed, setCenterPressed] = useState(false)
-  const [nextPressed, setNextPressed] = useState(false)
-  const [prevPressed, setPrevPressed] = useState(false)
+  const [centerPressed, setCenterPressed] = useState(false);
+  const [nextPressed, setNextPressed] = useState(false);
+  const [prevPressed, setPrevPressed] = useState(false);
+  const [menuPressed, setMenuPressed] = useState(false);
+  const [playPressed, setPlayPressed] = useState(false);
 
   return (
     <div className="w-40 h-40 mt-6 mx-auto rounded-full relative">
@@ -12,16 +14,24 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
 
         {/* MENU */}
         <div 
-          className="text-gray-200 text-[10px] font-semibold absolute top-3 left-14"
-          onClick={() => setScreen('library')}
+          className={`text-gray-200 text-[10px] font-semibold absolute top-3 left-14 ${menuPressed? 'scale-80':''}`}
+          onClick={() => {
+            setMenuPressed(true);
+            setScreen('library');
+            setTimeout(() => setMenuPressed(false), 150);
+          }}
         >
           <p className="cursor-pointer">MENU</p>
         </div>
 
         {/* Play Icon (bottom center) */}
         <svg
-          onClick={() => setScreen('now-playing')}
-          className="cursor-pointer absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20"
+          onClick={() => {
+            setPlayPressed(true);
+            setScreen('now-playing');
+            setTimeout(() => setPlayPressed(false), 150);
+          }}
+          className={`cursor-pointer absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20 ${playPressed?'scale-80':''}`}
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           fill="#e5e7eb"
@@ -34,9 +44,9 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
         {/* Next Button */}
         <svg
           onClick={() => {
-            setNextPressed(true)
-            onNext()
-            setTimeout(() => setNextPressed(false), 150)
+            setNextPressed(true);
+            onNext();
+            setTimeout(() => setNextPressed(false), 150);
           }}
           width={12}
           height={12}

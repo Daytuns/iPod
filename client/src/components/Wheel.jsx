@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious }) => {
+const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }) => {
   const [centerPressed, setCenterPressed] = useState(false)
   const [nextPressed, setNextPressed] = useState(false)
   const [prevPressed, setPrevPressed] = useState(false)
@@ -9,13 +9,19 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious }) => {
     <div className="w-40 h-40 mt-6 mx-auto rounded-full relative">
       {/* Inner Ring */}
       <div className="absolute inset-2 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
-        <div className="text-gray-200 text-[10px] font-semibold absolute top-3 left-14">
+
+        {/* MENU */}
+        <div 
+          className="text-gray-200 text-[10px] font-semibold absolute top-3 left-14"
+          onClick={() => setScreen('library')}
+        >
           <p className="cursor-pointer">MENU</p>
         </div>
 
         {/* Play Icon (bottom center) */}
         <svg
-          className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20"
+          onClick={() => setScreen('now-playing')}
+          className="cursor-pointer absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           fill="#e5e7eb"

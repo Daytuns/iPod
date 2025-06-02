@@ -1,11 +1,14 @@
-import Screen from "./components/Screen.jsx"
+import NowPlayingScreen from "./components/NowPlayingScreen.jsx"
+import Screen from "./components/Screen.jsx";
 import Wheel from "./components/Wheel.jsx"
 import { useSpotifyAuth } from "./useSpotifyAuth";
 import { useNowPlaying } from "./useNowPlaying";
+import { useState } from "react";
 
 function IPod() {
   const { accessToken, refreshAccessToken } = useSpotifyAuth();
   const { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious, device, seekPosition } = useNowPlaying(accessToken, refreshAccessToken);
+  const [screen, setScreen] = useState("now-playing");
 
   return (
     <>
@@ -21,8 +24,15 @@ function IPod() {
           <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-white/30 to-transparent rounded-l-[2rem]"></div>
           <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-white/30 to-transparent rounded-l-[2rem]"></div>
 
-          <Screen currentlyPlaying={currentlyPlaying} device={device} seekPosition={seekPosition}/>
-          <Wheel isPlaying={isPlaying} onPlayPause={togglePlayback} onNext={playNext} onPrevious={playPrevious} />
+          {/* <NowPlayingScreen currentlyPlaying={currentlyPlaying} device={device} seekPosition={seekPosition}/> */}
+          <Screen
+            screen={screen}
+            setScreen={setScreen}
+            currentlyPlaying={currentlyPlaying}
+            device={device}
+            seekPosition={seekPosition}
+          />
+          <Wheel isPlaying={isPlaying} onPlayPause={togglePlayback} onNext={playNext} onPrevious={playPrevious} screen={screen} setScreen={setScreen}/>
         </div>
       </div>
     </>

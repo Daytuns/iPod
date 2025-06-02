@@ -118,7 +118,7 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
   };
 
   const seekPosition = async (pos) => {
-  const roundedPos = Math.round(pos); // or Math.round(pos)
+  const roundedPos = Math.round(pos); 
   console.log(roundedPos);
 
   try {

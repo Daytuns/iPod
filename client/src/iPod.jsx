@@ -3,11 +3,13 @@ import Screen from "./components/Screen.jsx";
 import Wheel from "./components/Wheel.jsx"
 import { useSpotifyAuth } from "./useSpotifyAuth";
 import { useNowPlaying } from "./useNowPlaying";
+import { usePlaylists } from "./usePlaylists.js";
 import { useState } from "react";
 
 function IPod() {
   const { accessToken, refreshAccessToken } = useSpotifyAuth();
   const { currentlyPlaying, isPlaying, togglePlayback, playNext, playPrevious, device, seekPosition } = useNowPlaying(accessToken, refreshAccessToken);
+  const { playlists, loading, playlists_error } = usePlaylists(accessToken, refreshAccessToken);
   const [screen, setScreen] = useState("now-playing");
 
   return (
@@ -31,6 +33,10 @@ function IPod() {
             currentlyPlaying={currentlyPlaying}
             device={device}
             seekPosition={seekPosition}
+
+            playlists={playlists}
+            loading={loading}
+            playlists_error={playlists_error}
           />
           <Wheel isPlaying={isPlaying} onPlayPause={togglePlayback} onNext={playNext} onPrevious={playPrevious} screen={screen} setScreen={setScreen}/>
         </div>

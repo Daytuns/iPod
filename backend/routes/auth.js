@@ -11,7 +11,8 @@ router.get("/login", (req, res) => {
     "user-read-currently-playing",
     "streaming",
     "user-read-email",
-    "user-read-private"
+    "user-read-private",
+    "playlist-read-private"
   ].join(" ");
 
   const queryParams = querystring.stringify({

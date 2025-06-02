@@ -94,7 +94,7 @@ const NowPlayingScreen = ({ currentlyPlaying, device, seekPosition }) => {
   return (
     <>
     {/* <div className="bg-black/20 backdrop-blur-xs z-50 fixed w-[156px] h-[188px] mt-[18px] rounded-md"></div> */}
-    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden bg-gray-800">
+    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b]">
 
       {/* Top Status Bar */}
       <div className="flex justify-between items-center px-2 py-1 text-[10px] text-gray-100 border-b border-gray-600 font-semibold">

@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+@plugin 'tailwind-scrollbar' {
+    nocompatible: true;
+    preferredStrategy: 'pseudoelements';
+}
+
 /* Class based dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
 .conic-gradient-bg {
   background: conic-gradient(from 0deg, #374151, #1f2937, #374151, #1f2937, #374151);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
 }

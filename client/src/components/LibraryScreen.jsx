@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const LibraryScreen = ({ playlists, loading, playlists_error}) => {
+const LibraryScreen = ({ playlists, loading, playlists_error, setScreen, setSelectedPlaylistId }) => {
     const [time, setTime] = useState(() => {
     const now = new Date()
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -34,7 +34,14 @@ const LibraryScreen = ({ playlists, loading, playlists_error}) => {
                 <h2 className="font-bold mb-2 text-white">Your Playlists</h2>
                 <ul className="space-y-2 overflow-x-hidden">
                     {playlists.map((playlist) => (
-                    <li key={playlist.id} className="flex text-xs text-white items-center gap-1 hover:bg-zinc-700 rounded cursor-pointer">
+                    <li 
+                        key={playlist.id} 
+                        className="flex text-xs text-white items-center gap-1 hover:bg-zinc-700 rounded cursor-pointer"
+                        onClick={() => {
+                            setSelectedPlaylistId(playlist.id);
+                            requestAnimationFrame(() => setScreen("songs"));
+                        }}
+                    >
                         {playlist.images[0] && (
                         <img
                             src={playlist.images[0].url}

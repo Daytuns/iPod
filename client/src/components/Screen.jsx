@@ -1,7 +1,8 @@
 import NowPlayingScreen from "./NowPlayingScreen";
 import LibraryScreen from "./LibraryScreen";
+import SongsScreen from "./SongsScreen";
 
-const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, playlists, loading, playlists_error }) => {
+const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, playlists, loading, playlists_error, accessToken, refreshAccessToken, selectedPlaylistId, setSelectedPlaylistId }) => {
   switch (screen) {
     case "now-playing":
       return (
@@ -12,11 +13,26 @@ const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, pla
         />
       );
     case "library":
-      return <LibraryScreen 
-              playlists = {playlists}
-              loading = {loading}
-              playlists_error = {playlists_error}
-            />;
+      return (
+        <LibraryScreen 
+          playlists = {playlists}
+          loading = {loading}
+          playlists_error = {playlists_error}
+          setScreen={setScreen}
+          setSelectedPlaylistId={setSelectedPlaylistId}
+        />
+      );
+
+    case "songs":
+      return (
+        <SongsScreen
+          accessToken={accessToken}
+          refreshAccessToken={refreshAccessToken}
+          playlistId={selectedPlaylistId}
+        />
+
+      );
+
     default:
       return <div className="text-white text-sm p-4">Unknown screen</div>;
   }

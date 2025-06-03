@@ -144,6 +144,7 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
     playNext,
     playPrevious,
     device,
-    seekPosition
+    seekPosition,
+    fetchCurrentlyPlaying
   };
 }

@@ -2,7 +2,7 @@ import NowPlayingScreen from "./NowPlayingScreen";
 import LibraryScreen from "./LibraryScreen";
 import SongsScreen from "./SongsScreen";
 
-const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, playlists, loading, playlists_error, accessToken, refreshAccessToken, selectedPlaylistId, setSelectedPlaylistId }) => {
+const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, playlists, loading, playlists_error, accessToken, refreshAccessToken, selectedPlaylistId, setSelectedPlaylistId, fetchCurrentlyPlaying }) => {
   switch (screen) {
     case "now-playing":
       return (
@@ -30,6 +30,7 @@ const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, pla
           refreshAccessToken={refreshAccessToken}
           playlistId={selectedPlaylistId}
           setScreen={setScreen}
+          fetchCurrentlyPlaying={fetchCurrentlyPlaying}
         />
 
       );

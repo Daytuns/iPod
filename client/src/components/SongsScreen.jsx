@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSongs } from '../useSongs'
 
-const SongsScreen = ({ accessToken, refreshAccessToken, playlistId, setScreen }) => {
+const SongsScreen = ({ accessToken, refreshAccessToken, playlistId, setScreen, fetchCurrentlyPlaying }) => {
   const { songs, loading, songsError } = useSongs(accessToken, refreshAccessToken, playlistId)
 
   const [time, setTime] = useState(() => {
@@ -94,8 +94,11 @@ const SongsScreen = ({ accessToken, refreshAccessToken, playlistId, setScreen })
                 key={track.id}
                 className="flex text-xs text-white items-center gap-2 hover:bg-zinc-700 rounded cursor-pointer px-1 py-0.5"
                 onClick={() => {
-                  playTrack(track.uri, accessToken, playlistUri, index)
-                  setScreen("now-playing")
+                  playTrack(track.uri, accessToken, playlistUri, index);
+                  setTimeout(() => {
+                    fetchCurrentlyPlaying();         
+                    setScreen("now-playing");   
+                  }, 700); 
                 }}
               >
                 {track.album?.images?.[0]?.url && (

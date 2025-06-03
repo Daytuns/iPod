@@ -34,7 +34,7 @@ const LibraryScreen = ({ playlists, loading, playlists_error}) => {
                 <h2 className="font-bold mb-2 text-white">Your Playlists</h2>
                 <ul className="space-y-2 overflow-x-hidden">
                     {playlists.map((playlist) => (
-                    <li key={playlist.id} className="flex text-xs text-white items-center gap-1">
+                    <li key={playlist.id} className="flex text-xs text-white items-center gap-1 hover:bg-zinc-700 rounded cursor-pointer">
                         {playlist.images[0] && (
                         <img
                             src={playlist.images[0].url}

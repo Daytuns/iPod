@@ -29,6 +29,7 @@ const Screen = ({ screen, setScreen, currentlyPlaying, device, seekPosition, pla
           accessToken={accessToken}
           refreshAccessToken={refreshAccessToken}
           playlistId={selectedPlaylistId}
+          setScreen={setScreen}
         />
 
       );

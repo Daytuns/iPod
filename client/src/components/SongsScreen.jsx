@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSongs } from '../useSongs'
 
-const SongsScreen = ({ accessToken, refreshAccessToken, playlistId }) => {
+const SongsScreen = ({ accessToken, refreshAccessToken, playlistId, setScreen }) => {
   const { songs, loading, songsError } = useSongs(accessToken, refreshAccessToken, playlistId)
 
   const [time, setTime] = useState(() => {
@@ -88,11 +88,14 @@ const SongsScreen = ({ accessToken, refreshAccessToken, playlistId }) => {
       <div className="p-2 flex-1 overflow-y-auto scrollbar-w-1 scrollbar scrollbar-thumb-gray-700 scrollbar-track-gray-900 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
         <h2 className="font-bold mb-2 text-white">Songs</h2>
         <ul className="space-y-2 overflow-x-hidden">
-          {songs.map((item, i) => (
+          {songs.map((item, index) => (
             <li
               key={item.track.id}
               className="flex text-xs text-white items-center gap-2 hover:bg-zinc-700 rounded cursor-pointer px-1 py-0.5"
-              onClick={() => playTrack(item.track.uri, accessToken)}
+              onClick={() => {
+                playTrack(item.track.uri, accessToken, `spotify:playlist:${playlistId}`, index);
+                setScreen("now-playing");
+            }}
             >
               {item.track.album?.images?.[0]?.url && (
                 <img
@@ -113,15 +116,19 @@ const SongsScreen = ({ accessToken, refreshAccessToken, playlistId }) => {
   )
 }
 
-const playTrack = async (uri, accessToken) => {
+const playTrack = async (trackUri, accessToken, playlistUri, position) => {
   await fetch("https://api.spotify.com/v1/me/player/play", {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ uris: [uri] }),
-  })
-}
+    body: JSON.stringify({
+      context_uri: playlistUri, // e.g., "spotify:playlist:123abc..."
+      offset: { position },     // index of the song in the playlist
+    }),
+  });
+};
+
 
 export default SongsScreen

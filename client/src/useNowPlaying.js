@@ -15,7 +15,7 @@ export function useNowPlaying(accessToken, refreshAccessToken) {
 
       if (response.status === 204) {
         setCurrentlyPlaying(null);
-        setIsPlaying(false); // <- THIS is the missing piece
+        setIsPlaying(false); 
         return;
         }
       if (response.status === 401) {

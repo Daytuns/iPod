@@ -11,17 +11,20 @@ export function useSongs(accessToken, refreshAccessToken, playlistId) {
     setLoading(true);
     try {
       let tokenToUse = accessToken;
+      let endpoint =
+        playlistId === "liked"
+          ? "https://api.spotify.com/v1/me/tracks?limit=50"
+          : `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
-      let response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+      let response = await fetch(endpoint, {
         headers: { Authorization: `Bearer ${tokenToUse}` }
       });
 
-      // If token expired, refresh and retry
       if (response.status === 401) {
         const newToken = await refreshAccessToken();
         if (newToken) {
           tokenToUse = newToken;
-          response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+          response = await fetch(endpoint, {
             headers: { Authorization: `Bearer ${tokenToUse}` }
           });
         }
@@ -30,7 +33,17 @@ export function useSongs(accessToken, refreshAccessToken, playlistId) {
       if (!response.ok) throw new Error("Failed to fetch songs");
 
       const data = await response.json();
-      setSongs(data.items);
+
+      const items =
+        playlistId === "liked"
+          ? data.items
+              .filter(item => item.track !== null)
+              .map(item => item.track) // extract .track for liked songs
+          : data.items
+              .filter(item => item.track !== null)
+              .map(item => item.track); // also extract .track for playlist songs
+
+      setSongs(items);
       setSongsError(null);
     } catch (err) {
       console.error("Fetch songs error:", err);
@@ -39,6 +52,7 @@ export function useSongs(accessToken, refreshAccessToken, playlistId) {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (!accessToken || !playlistId) return;

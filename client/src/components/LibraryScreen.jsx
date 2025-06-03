@@ -31,7 +31,7 @@ const LibraryScreen = ({ playlists, loading, playlists_error, setScreen, setSele
 
             {/* Playlists */}
             <div className="p-2 flex-1 overflow-y-auto scrollbar-w-1 scrollbar scrollbar-thumb-gray-700 scrollbar-track-gray-900 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
-                <h2 className="font-bold mb-2 text-white">Your Playlists</h2>
+                <h2 className="font-bold mb-2 text-white">Your Library</h2>
                 <ul className="space-y-2 overflow-x-hidden">
                     {playlists.map((playlist) => (
                     <li 

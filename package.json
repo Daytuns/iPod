@@ -2,9 +2,12 @@
   "name": "reimagining_the_ipod",
   "version": "1.0.0",
   "description": "��#\u0000 \u0000i\u0000P\u0000o\u0000d\u0000\r\u0000 \u0000",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently -k \"npm:dev-client\" \"npm:dev-electron\"",
+    "dev-client": "npm run dev --prefix client",
+    "dev-electron": "wait-on http://localhost:5173 && electron .",
+    "start": "electron ."
   },
   "keywords": [],
   "author": "",

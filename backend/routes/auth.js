@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const querystring = require("querystring");
 const { getAccessToken, refreshAccessToken } = require("../utils/spotify");
+//const tokenData = await getAccessToken(code);
+//setTokens(tokenData);
+const { setTokens } = require("../utils/tokenCache");
 
 // /login
 router.get("/login", (req, res) => {
@@ -21,6 +24,7 @@ router.get("/login", (req, res) => {
     client_id: process.env.SPOTIFY_CLIENT_ID,
     scope,
     redirect_uri: process.env.REDIRECT_URI,
+    show_dialog: true, // This forces re-consent so refresh_token is included
   });
 
   res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
@@ -32,13 +36,21 @@ router.get("/callback", async (req, res) => {
   if (!code) return res.status(400).send("Missing authorization code");
 
   try {
-    const { access_token, refresh_token } = await getAccessToken(code);
-    res.redirect(`${process.env.FRONTEND_URI}/?access_token=${access_token}&refresh_token=${refresh_token}`);
+    const tokenData = await getAccessToken(code);
+    console.log("Tokens received from Spotify:", tokenData);
+
+    if (!tokenData.refresh_token) {
+      console.warn("Missing refresh_token in tokenData!");
+    }
+
+    setTokens(tokenData);
+    res.redirect(`${process.env.FRONTEND_URI}`);
   } catch (error) {
     console.error("Callback error:", error.message);
     res.status(500).send("Authentication failed");
   }
 });
+
 
 // /refresh_token
 router.get("/refresh_token", async (req, res) => {

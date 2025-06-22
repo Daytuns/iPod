@@ -536,14 +536,17 @@ ipcMain.handle('play-track', async (event, { uri, contextUri }) => {
     // Build the request body
     const requestBody = {};
     
-    if (contextUri) {
-      // If we have a context like playlist or album
-      requestBody.context_uri = contextUri;
-    }
+    // Special handling for Liked Songs
+    const isLikedSongs = contextUri === 'spotify:collection:tracks';
     
-    if (uri) {
-      // If we have a specific track URI
-      if (contextUri) {
+    if (isLikedSongs) {
+      // For Liked Songs, we need to use the specific track URI directly
+      requestBody.uris = [uri];
+    } else if (contextUri) {
+      // For regular playlists, use context_uri and offset
+      requestBody.context_uri = contextUri;
+      
+      if (uri) {
         // When using context, we need to specify the track via offset
         // First get the tracks in the context to find the position
         let tracksResponse;
@@ -558,7 +561,7 @@ ipcMain.handle('play-track', async (event, { uri, contextUri }) => {
           });
           
           // Find the position of the track in the playlist
-          const track = tracksResponse.data.items.find(item => item.track.uri === uri);
+          const track = tracksResponse.data.items.find(item => item.track && item.track.uri === uri);
           if (track) {
             offset = tracksResponse.data.items.indexOf(track);
           }
@@ -566,10 +569,10 @@ ipcMain.handle('play-track', async (event, { uri, contextUri }) => {
         
         // Set the offset in the request
         requestBody.offset = { position: offset };
-      } else {
-        // When not using context, we can just specify the URI directly
-        requestBody.uris = [uri];
       }
+    } else if (uri) {
+      // When not using context, we can just specify the URI directly
+      requestBody.uris = [uri];
     }
     
     console.log('Play request body:', requestBody);

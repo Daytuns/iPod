@@ -427,12 +427,76 @@ ipcMain.handle('play-next', async () => {
   if (!isTokenValid) return false;
 
   try {
-    await axios.post('https://api.spotify.com/v1/me/player/next', {}, {
+    // First get the current playback state
+    const currentPlayback = await axios.get('https://api.spotify.com/v1/me/player', {
       headers: {
         Authorization: `Bearer ${spotifyTokens.accessToken}`
       }
     });
-    return true;
+    
+    // If we're playing from Liked Songs (no context), we need to handle it differently
+    if (currentPlayback.data && !currentPlayback.data.context) {
+      // Get the current track URI
+      const currentTrackUri = currentPlayback.data.item?.uri;
+      
+      if (!currentTrackUri) {
+        console.error('No current track found');
+        return false;
+      }
+      
+      // Get the user's liked songs
+      const likedSongsResponse = await axios.get('https://api.spotify.com/v1/me/tracks?limit=50', {
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`
+        }
+      });
+      
+      if (!likedSongsResponse.data || !likedSongsResponse.data.items) {
+        console.error('Failed to get liked songs');
+        return false;
+      }
+      
+      // Find the current track in the liked songs
+      const tracks = likedSongsResponse.data.items;
+      const currentIndex = tracks.findIndex(item => item.track && item.track.uri === currentTrackUri);
+      
+      if (currentIndex === -1) {
+        console.error('Current track not found in liked songs');
+        return false;
+      }
+      
+      // Get the next track
+      const nextIndex = (currentIndex + 1) % tracks.length;
+      const nextTrack = tracks[nextIndex].track;
+      
+      if (!nextTrack || !nextTrack.uri) {
+        console.error('Next track not found');
+        return false;
+      }
+      
+      // Play the next track
+      await axios({
+        method: 'PUT',
+        url: 'https://api.spotify.com/v1/me/player/play',
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          uris: [nextTrack.uri]
+        }
+      });
+      
+      return true;
+    } else {
+      // For regular playback with context, use the standard next endpoint
+      await axios.post('https://api.spotify.com/v1/me/player/next', {}, {
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`
+        }
+      });
+      return true;
+    }
   } catch (error) {
     console.error('Error playing next track:', error.message);
     return false;
@@ -444,12 +508,76 @@ ipcMain.handle('play-previous', async () => {
   if (!isTokenValid) return false;
 
   try {
-    await axios.post('https://api.spotify.com/v1/me/player/previous', {}, {
+    // First get the current playback state
+    const currentPlayback = await axios.get('https://api.spotify.com/v1/me/player', {
       headers: {
         Authorization: `Bearer ${spotifyTokens.accessToken}`
       }
     });
-    return true;
+    
+    // If we're playing from Liked Songs (no context), we need to handle it differently
+    if (currentPlayback.data && !currentPlayback.data.context) {
+      // Get the current track URI
+      const currentTrackUri = currentPlayback.data.item?.uri;
+      
+      if (!currentTrackUri) {
+        console.error('No current track found');
+        return false;
+      }
+      
+      // Get the user's liked songs
+      const likedSongsResponse = await axios.get('https://api.spotify.com/v1/me/tracks?limit=50', {
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`
+        }
+      });
+      
+      if (!likedSongsResponse.data || !likedSongsResponse.data.items) {
+        console.error('Failed to get liked songs');
+        return false;
+      }
+      
+      // Find the current track in the liked songs
+      const tracks = likedSongsResponse.data.items;
+      const currentIndex = tracks.findIndex(item => item.track && item.track.uri === currentTrackUri);
+      
+      if (currentIndex === -1) {
+        console.error('Current track not found in liked songs');
+        return false;
+      }
+      
+      // Get the previous track
+      const prevIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+      const prevTrack = tracks[prevIndex].track;
+      
+      if (!prevTrack || !prevTrack.uri) {
+        console.error('Previous track not found');
+        return false;
+      }
+      
+      // Play the previous track
+      await axios({
+        method: 'PUT',
+        url: 'https://api.spotify.com/v1/me/player/play',
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          uris: [prevTrack.uri]
+        }
+      });
+      
+      return true;
+    } else {
+      // For regular playback with context, use the standard previous endpoint
+      await axios.post('https://api.spotify.com/v1/me/player/previous', {}, {
+        headers: {
+          Authorization: `Bearer ${spotifyTokens.accessToken}`
+        }
+      });
+      return true;
+    }
   } catch (error) {
     console.error('Error playing previous track:', error.message);
     return false;

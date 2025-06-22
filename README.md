@@ -8,7 +8,7 @@ A nostalgic iPod-inspired music player that connects to your Spotify account. Co
 
 - Classic iPod interface with click wheel navigation
 - Spotify authentication directly in the Electron app
-- Browse and play your Spotify playlists
+- Browse and play your Spotify library
 - View and control currently playing track
 - Seek through tracks using the progress bar
 - Modern, responsive design with a nostalgic feel

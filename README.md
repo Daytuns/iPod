@@ -16,7 +16,7 @@ A nostalgic iPod-inspired music player that connects to your Spotify account. Co
 ## Technology Stack
 
 - **Electron**: Cross-platform desktop application framework
-- **React**: UI library for building the interface
+- **React**: JS library for building the interface
 - **Tailwind CSS**: Utility-first CSS framework for styling
 - **Spotify Web API**: For authentication and music playback
 
@@ -25,6 +25,7 @@ A nostalgic iPod-inspired music player that connects to your Spotify account. Co
 - Node.js (v16 or higher)
 - npm or yarn
 - Spotify Developer Account and registered application
+- Spotify Premium Account
 
 ## Setup
 
@@ -96,10 +97,6 @@ iPod/
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgements
 

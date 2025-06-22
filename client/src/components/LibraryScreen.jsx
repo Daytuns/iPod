@@ -16,8 +16,9 @@ const LibraryScreen = ({ playlists, loading, playlists_error, setScreen, setSele
       return () => clearInterval(interval)
     }, [])
 
-    if (loading) return <div>Loading playlists...</div>;
-    if (playlists_error) return <div>{playlists_error}</div>;
+    if (loading) return <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b] flex flex-col shadow-[0_0_20px_rgba(0,255,255,0.1)] text-white flex justify-center items-center text-sm">Loading playlists...</div>;
+    
+    if (playlists_error) return <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b] flex flex-col shadow-[0_0_20px_rgba(0,255,255,0.1)] text-red-400 flex justify-center items-center text-sm">{playlists_error}</div>;
 
     return (
         <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b] flex flex-col shadow-[0_0_20px_rgba(0,255,255,0.1)]">
@@ -28,19 +29,19 @@ const LibraryScreen = ({ playlists, loading, playlists_error, setScreen, setSele
                 <span>{time}</span>
             </div>
 
-
-            {/* Playlists */}
+            {/* Playlists - Add max-h-[320px] to ensure it's scrollable */}
             <div className="p-2 flex-1 overflow-y-auto scrollbar-w-1 scrollbar scrollbar-thumb-gray-700 scrollbar-track-gray-900 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
-                <h2 className="font-bold mb-2 text-white">Your Library</h2>
-                <ul className="space-y-2 overflow-x-hidden">
+                <h2 className="font-bold mb-2 text-white" style={{ WebkitAppRegion: 'no-drag' }}>Your Library</h2>
+                <ul className="space-y-2 overflow-x-hidden" style={{ WebkitAppRegion: 'no-drag' }}>
                     {playlists.map((playlist) => (
                     <li 
                         key={playlist.id} 
-                        className="flex text-xs text-white items-center gap-1 hover:bg-zinc-700 rounded cursor-pointer"
+                        className="flex text-xs text-white items-center gap-1 hover:bg-zinc-700 p-1 rounded cursor-pointer transition-colors"
                         onClick={() => {
                             setSelectedPlaylistId(playlist.id);
                             requestAnimationFrame(() => setScreen("songs"));
                         }}
+                        style={{ WebkitAppRegion: 'no-drag' }}
                     >
                         {playlist.images[0] && (
                         <img
@@ -49,7 +50,7 @@ const LibraryScreen = ({ playlists, loading, playlists_error, setScreen, setSele
                             className="w-8 h-8 rounded shadow-xl"
                         />
                         )}
-                        <div className='flex flex-col gap-0.5'>
+                        <div className='flex flex-col gap-0.5 flex-1 min-w-0'>
                             <span className='font-semibold truncate text-[10px]'>{playlist.name}</span>
                             <span className='text-[9px] text-gray-300'>{playlist.tracks.total} songs</span>
                         </div>

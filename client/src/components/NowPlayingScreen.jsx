@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
 
 const NowPlayingScreen = ({ currentlyPlaying, device, seekPosition }) => {
@@ -15,6 +15,14 @@ const NowPlayingScreen = ({ currentlyPlaying, device, seekPosition }) => {
 
   const progressBarRef = useRef(null);
 
+  // Format the device name for display
+  const deviceName = useMemo(() => {
+    if (!device || !device.name) return 'Spotify';
+    if (device.type) {
+      return `${device.name} (${device.type})`;
+    }
+    return device.name;
+  }, [device]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,7 +102,7 @@ const NowPlayingScreen = ({ currentlyPlaying, device, seekPosition }) => {
   return (
     <>
     {/* <div className="bg-black/20 backdrop-blur-xs z-50 fixed w-[156px] h-[188px] mt-[18px] rounded-md"></div> */}
-    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b]">
+    <div className="w-42 h-50 mt-3 rounded-md border-[6px] border-black shadow-inner overflow-hidden bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#2b2b2b] flex flex-col shadow-[0_0_20px_rgba(0,255,255,0.1)]">
 
       {/* Top Status Bar */}
       <div className="flex justify-between items-center px-2 py-1 text-[10px] text-gray-100 border-b border-gray-600 font-semibold">
@@ -137,6 +145,7 @@ const NowPlayingScreen = ({ currentlyPlaying, device, seekPosition }) => {
         <div className="px-3 mt-2 z-1">
           <div className="relative w-full h-[8px]">
             <div
+              style={{ WebkitAppRegion: 'no-drag' }}
               ref={progressBarRef}
               onClick={(e) => {
                 if (!progressBarRef.current) return;

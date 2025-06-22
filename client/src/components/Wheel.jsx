@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }) => {
+const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen, disabled }) => {
   const [centerPressed, setCenterPressed] = useState(false);
   const [nextPressed, setNextPressed] = useState(false);
   const [prevPressed, setPrevPressed] = useState(false);
@@ -8,14 +8,15 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
   const [playPressed, setPlayPressed] = useState(false);
 
   return (
-    <div className="w-40 h-40 mt-6 mx-auto rounded-full relative">
+    <div className="w-40 h-40 mt-6 mx-auto rounded-full relative" style={{ WebkitAppRegion: 'no-drag' }}>
       {/* Inner Ring */}
       <div className="absolute inset-2 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
 
         {/* MENU */}
         <div 
-          className={`text-gray-200 text-[10px] font-semibold absolute top-3 left-14 ${menuPressed? 'scale-80':''}`}
+          className={`text-gray-200 text-[10px] font-semibold absolute top-3 left-14 ${menuPressed? 'scale-80':''} ${disabled ? 'opacity-50' : ''}`}
           onClick={() => {
+            if (disabled) return;
             setMenuPressed(true);
             setScreen('library');
             setTimeout(() => setMenuPressed(false), 150);
@@ -27,11 +28,12 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
         {/* Play Icon (bottom center) */}
         <svg
           onClick={() => {
+            if (disabled) return;
             setPlayPressed(true);
             setScreen('now-playing');
             setTimeout(() => setPlayPressed(false), 150);
           }}
-          className={`cursor-pointer absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20 ${playPressed?'scale-80':''}`}
+          className={`cursor-pointer absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20 ${playPressed?'scale-80':''} ${disabled ? 'opacity-50' : ''}`}
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           fill="#e5e7eb"
@@ -44,6 +46,7 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
         {/* Next Button */}
         <svg
           onClick={() => {
+            if (disabled) return;
             setNextPressed(true);
             onNext();
             setTimeout(() => setNextPressed(false), 150);
@@ -52,7 +55,7 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
           height={12}
           className={`absolute bottom-1/2 right-3 hover:cursor-pointer transition-transform duration-100 ${
             nextPressed ? 'scale-80' : ''
-          }`}
+          } ${disabled ? 'opacity-50' : ''}`}
           fill="#e5e7eb"
           viewBox="0 0 32 32"
           xmlns="http://www.w3.org/2000/svg"
@@ -66,6 +69,7 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
         {/* Previous Button */}
         <svg
           onClick={() => {
+            if (disabled) return;
             setPrevPressed(true)
             onPrevious()
             setTimeout(() => setPrevPressed(false), 150)
@@ -74,7 +78,7 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
           height={12}
           className={`hover:cursor-pointer absolute bottom-1/2 left-3 transition-transform duration-100 ${
             prevPressed ? 'scale-80' : ''
-          }`}
+          } ${disabled ? 'opacity-50' : ''}`}
           style={{
             transform: `${prevPressed ? 'scale(0.8)' : 'scale(1)'} scaleX(-1)`
           }}
@@ -92,13 +96,14 @@ const Wheel = ({ onPlayPause, isPlaying, onNext, onPrevious, screen, setScreen }
       {/* Center Button (Play/Pause) */}
       <div
         onClick={() => {
+          if (disabled) return;
           setCenterPressed(true)
           onPlayPause()
           setTimeout(() => setCenterPressed(false), 150)
         }}
         className={`absolute top-1/2 left-1/2 rounded-full bg-gray-950 hover:cursor-pointer transition-transform duration-100 ${
           centerPressed ? 'scale-95' : ''
-        }`}
+        } ${disabled ? 'opacity-50' : ''}`}
         style={{
           width: '72px',
           height: '72px',

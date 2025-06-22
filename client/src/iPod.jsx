@@ -1,6 +1,6 @@
 import Screen from "./components/Screen.jsx";
 import Wheel from "./components/Wheel.jsx"
-import { useElectronSpotify } from "./useElectronSpotify";
+import { useElectronSpotify } from "./hooks/useElectronSpotify";
 import { useState, useEffect } from "react";
 
 function IPod() {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSongs } from '../useSongs'
+import { useSongs } from '../hooks/useSongs'
 
 const SongsScreen = ({ accessToken, refreshAccessToken, playlistId, setScreen, fetchCurrentlyPlaying, playTrack }) => {
   const { songs, loading, songsError } = useSongs(accessToken, refreshAccessToken, playlistId)
